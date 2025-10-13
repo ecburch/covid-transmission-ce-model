@@ -1,5 +1,6 @@
 
-# BEFORE RUNNING CODE, CREATE A FOLDER IN WORKING DIRECTORY NAMED "RESULTS" AND A SUBFOLDER NAMED "SENSITIVITY ANALYSIS"
+# BEFORE RUNNING CODE, CREATE A FOLDER IN WORKING DIRECTORY NAMED "RESULTS" AND A SUBFOLDER NAMED "SENSITIVITY ANALYSIS", 
+# AND SAVE ALL R SCRIPTS AND THE DATA FOLDER IN THIS REPOSITORY TO WORKING DIRECTORY
 
 
 library(deSolve)
@@ -35,7 +36,7 @@ theme_set(theme_light(base_size = 15))
 options(scipen=999)
 
 # LOAD THE OUTPUT FROM RUNNING THE MODEL FOR 100 YEARS WITH 500 PARAMETER SETS. I.E. NEED THE "results",
-#  "df_yearly_inf_hosp_deaths_lc", and "df_hosp_deaths_weekly_summaries" dataframes.
+#  "df_yearly_inf_hosp_deaths_lc", and "df_hosp_deaths_weekly_summaries" dataframes and lists.
 
 load("Model run 1.RData")
 
@@ -2146,3 +2147,4 @@ print(lc_sa_cef_plots)
 ggsave(path = "Results/Sensitivity analysis", filename = paste0(as.character(Sys.Date()),
                                                                 " Plot ii. Cost-effectiveness frontier (long covid parameters).jpeg"),
        plot = lc_sa_cef_plots, width = 10, height = 5)
+
