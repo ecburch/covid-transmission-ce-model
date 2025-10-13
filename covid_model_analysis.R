@@ -1,5 +1,5 @@
 
-# BEFORE RUNNING CODE, CREATE A FOLDER IN WORKING DIRECTORY NAMED "RESULTS"
+# BEFORE RUNNING CODE, CREATE A FOLDER IN WORKING DIRECTORY NAMED "RESULTS", AND SAVE ALL R SCRIPTS AND THE DATA FOLDER IN THIS REPOSITORY TO WORKING DIRECTORY
 
 
 
@@ -28,10 +28,6 @@ library(patchwork)
 library(ggrepel)
 library(RColorBrewer)
 library(RCurl)
-
-# Set working directory
-
-setwd("C:/Users/eb15389/OneDrive - University of Bristol/Documents - grp-Eleanor _ Hannah _ Ellen/Model/GIT code")
 
 # Set seed and GGplot theme
 
@@ -1126,4 +1122,5 @@ print(mean_yearly_deaths_plot_variant_scenarios)
 
 ggsave(path = "Results/Variant scenarios/", filename = paste0(as.character(Sys.Date()), " Mean yearly deaths, variant scenarios.jpeg"),
        plot = mean_yearly_deaths_plot_variant_scenarios, width = 14, height = 10)
+
 
