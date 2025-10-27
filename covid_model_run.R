@@ -1,3 +1,4 @@
+# COVID-19 model simulation code
 
 covid_model_run_fixed_params_variant_scenarios <- function(par_fit, variant_scenario, n_yearly_variants, vaccination_scenario, time_horizon) {
   
