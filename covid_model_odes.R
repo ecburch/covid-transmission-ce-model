@@ -1,6 +1,5 @@
-# Added compartment for RRW calculating cumulative waned recoveries
 
-# Create function "covid_model_odes" that computes the values of the model ODEs.
+# Create function "covid_model_odes" that computes the model ODEs.
 
 covid_model_odes <- function(t, states, par){
   with(as.list(c(states, par)), {
@@ -201,3 +200,4 @@ covid_model_odes <- function(t, states, par){
   }
   )
 }
+
