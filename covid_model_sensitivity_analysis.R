@@ -1,6 +1,6 @@
 
-# BEFORE RUNNING CODE, CREATE A FOLDER IN WORKING DIRECTORY NAMED "RESULTS" AND A SUBFOLDER NAMED "SENSITIVITY ANALYSIS", 
-# AND SAVE ALL R SCRIPTS AND THE DATA FOLDER IN THIS REPOSITORY TO WORKING DIRECTORY
+# SET WORKING DIRECTORY TO THE FOLDER CONTAINING MODEL CODE AND DATA
+
 
 
 library(deSolve)
@@ -35,16 +35,18 @@ set.seed(1)
 theme_set(theme_light(base_size = 15))
 options(scipen=999)
 
-# LOAD THE OUTPUT FROM RUNNING THE MODEL FOR 100 YEARS WITH 500 PARAMETER SETS. I.E. NEED THE "results",
-#  "df_yearly_inf_hosp_deaths_lc", and "df_hosp_deaths_weekly_summaries" dataframes and lists.
+
+
+# LOAD THE OUTPUT "Model run 1.RData" FROM RUNNING THE MODEL FOR 100 YEARS WITH 500 PARAMETER SETS. 
+# The "results", "df_yearly_inf_hosp_deaths_lc", and "df_hosp_deaths_weekly_summaries" dataframes and lists are required for this analysis.
 
 load("Model run 1.RData")
 
 ###############################################################################
 
-# Testing higher vaccine cost (£31 per vaccine dose + £10 admin fee)
+# Testing higher vaccine cost (£30 per vaccine dose + £10 admin fee)
 
-state_costs_vaccinated <- 41
+state_costs_vaccinated <- 40
 
 # Combining costs and utilities into lists
 
@@ -76,7 +78,7 @@ vacc_uptake_rate <- c(rep(0, 5), rep(6.4, 7), rep(31.7, 4), rep(31.7, 2), rep(31
 
 # Extracting life years remaining
 
-life_years_remaining <- read_excel("Data/Life expectancy (England).xlsx", sheet="Cohort males and females")
+life_years_remaining <- read_excel("Data/Life expectancy (England).xlsx", sheet = "Cohort males and females")
 
 life_years_remaining <- cbind(life_years_remaining[, -1],
                               rep(life_years_remaining[, ncol(life_years_remaining)], 51))
@@ -269,7 +271,7 @@ cef_plot <- ggplot(data = cef_data_means, aes(x = effectiveness, y = cost, colou
 print(cef_plot)
 
 # ggsave(path = "Results/Sensitivity analysis", 
-#        filename = paste0(as.character(Sys.Date()), " Plot 2. Cost-effectiveness frontier (£41 vaccine).jpeg"),
+#        filename = paste0(as.character(Sys.Date()), " Plot 2. Cost-effectiveness frontier (£30 vaccine).jpeg"),
 #        plot = cef_plot, width = 8, height = 6)
 
 # Check for negative incremental qalys
@@ -351,7 +353,7 @@ cost_effectiveness_plane <- cost_effectiveness_plane + label_plot + plot_layout(
 print(cost_effectiveness_plane)
 
 # ggsave(path = "Results/Sensitivity analysis", 
-#        filename = paste0(as.character(Sys.Date()), " Plot 3. Cost-effectiveness plane (£41 vaccine).jpeg"),
+#        filename = paste0(as.character(Sys.Date()), " Plot 3. Cost-effectiveness plane (£30 vaccine).jpeg"),
 #        plot = cost_effectiveness_plane, height = 12, width = 8)
 
 # Plot the cost-effectiveness acceptability curve: probability that vaccination is CE for various WTP thresholds
@@ -400,7 +402,7 @@ cost_effectiveness_acceptability_curve <- ggplot(prob_cost_effective, aes(x = Th
 print(cost_effectiveness_acceptability_curve)
 
 # ggsave(path = "Results/Sensitivity analysis", 
-#        filename = paste0(as.character(Sys.Date()), " Plot 4. Cost effectiveness acceptability curve (£41 vaccine).jpeg"), 
+#        filename = paste0(as.character(Sys.Date()), " Plot 4. Cost effectiveness acceptability curve (£30 vaccine).jpeg"), 
 #        plot = cost_effectiveness_acceptability_curve, width = 8, height = 5)
 
 # Calculating means and confidence intervals for all results
@@ -449,7 +451,7 @@ full_ce_results <- rbind.data.frame("ICER" = icer_mean, "ICER lower bound" = ice
 
 colnames(full_epi_results) <- colnames(full_ce_results) <- c("BASELINE, comparator", vacc_scenarios[-1])
 model_output <- list("Epi results" = full_epi_results, "CE results" = full_ce_results, Parameters = par_fit)
-write.xlsx((model_output), paste0("Results/Sensitivity analysis/", as.character(Sys.Date()), " Results table, £41 vaccine.xlsx"), 
+write.xlsx((model_output), paste0("Results/Sensitivity analysis/", as.character(Sys.Date()), " Results table, £30 vaccine.xlsx"), 
            rowNames = TRUE)
 
 
@@ -480,7 +482,7 @@ vacc_uptake_rate <- c(rep(0, 5), rep(6.4, 7), rep(31.7, 4), rep(31.7, 2), rep(31
 
 # Extracting life years remaining
 
-life_years_remaining <- read_excel("Data/Life expectancy (England).xlsx", sheet="Cohort males and females")
+life_years_remaining <- read_excel("Data/Life expectancy (England).xlsx", sheet = "Cohort males and females")
 
 life_years_remaining <- cbind(life_years_remaining[, -1],
                               rep(life_years_remaining[, ncol(life_years_remaining)], 51))
@@ -886,7 +888,7 @@ vacc_uptake_rate <- c(rep(0, 5), rep(6.4, 7), rep(31.7, 4), rep(31.7, 2), rep(31
 
 # Extracting life years remaining
 
-life_years_remaining <- read_excel("Data/Life expectancy (England).xlsx", sheet="Cohort males and females")
+life_years_remaining <- read_excel("Data/Life expectancy (England).xlsx", sheet = "Cohort males and females")
 
 life_years_remaining <- cbind(life_years_remaining[, -1],
                               rep(life_years_remaining[, ncol(life_years_remaining)], 51))
@@ -1082,7 +1084,7 @@ print(cef_plot)
 
 ggsave(path = "Results/Sensitivity analysis", 
        filename = paste0(as.character(Sys.Date()), " Plot 2. Cost-effectiveness frontier (10 year time horizon).jpeg"),
-       plot = cef_plot, width = 8, height = 6)
+       plot = cef_plot, width = 8.8, height = 6.6)
 
 # Check for negative incremental qalys
 
@@ -1312,7 +1314,7 @@ vacc_uptake_rate <- c(rep(0, 5), rep(6.4, 7), rep(31.7, 4), rep(31.7, 2), rep(31
 
 # Extracting life years remaining
 
-life_years_remaining <- read_excel("Data/Life expectancy (England).xlsx", sheet="Cohort males and females")
+life_years_remaining <- read_excel("Data/Life expectancy (England).xlsx", sheet = "Cohort males and females")
 
 life_years_remaining <- cbind(life_years_remaining[, -1],
                               rep(life_years_remaining[, ncol(life_years_remaining)], 51))
@@ -1698,15 +1700,11 @@ write.xlsx((model_output), paste0("Results/Sensitivity analysis/", as.character(
 
 # Testing greater cost and qaly loss from long Covid
 
-# Clear environment then reload model simulation results
+# Clear environment (except for cost-effectiveness frontier with no long Covid effects) then reload model simulation results
 
-rm(list = ls())
+rm(list=setdiff(ls(), "cef_plot_no_lc"))
 
 load("Model run 1.RData")
-
-# Load cost-effectiveness frontier plot from previous analysis with no effects from long Covid
-
-cef_plot_no_lc <- readRDS("cef_plot_no_lc.rds")
 
 # Change long Covid cost and QALY loss
 
@@ -1753,7 +1751,7 @@ vacc_uptake_rate <- c(rep(0, 5), rep(6.4, 7), rep(31.7, 4), rep(31.7, 2), rep(31
 
 # Extracting life years remaining
 
-life_years_remaining <- read_excel("Data/Life expectancy (England).xlsx", sheet="Cohort males and females")
+life_years_remaining <- read_excel("Data/Life expectancy (England).xlsx", sheet = "Cohort males and females")
 
 life_years_remaining <- cbind(life_years_remaining[, -1],
                               rep(life_years_remaining[, ncol(life_years_remaining)], 51))
@@ -2140,11 +2138,11 @@ lc_sa_cef_plots <- cef_plot_no_lc +
   
   cef_plot_severe_lc + 
   theme(legend.position = "none", axis.title.y = element_blank()) + labs(title = "(b) Increased cost and QALY loss from long Covid") + 
-  plot_layout(nrow = 1, axis_titles = "collect")
+  plot_layout(nrow = 2, axis_titles = "collect")
 
 print(lc_sa_cef_plots)
 
 ggsave(path = "Results/Sensitivity analysis", filename = paste0(as.character(Sys.Date()),
                                                                 " Plot ii. Cost-effectiveness frontier (long covid parameters).jpeg"),
-       plot = lc_sa_cef_plots, width = 10, height = 5)
-
+       plot = lc_sa_cef_plots, width = 8, height = 10
+       )
