@@ -1,5 +1,6 @@
 
-# BEFORE RUNNING CODE, CREATE A FOLDER IN WORKING DIRECTORY NAMED "RESULTS", AND SAVE ALL R SCRIPTS AND THE DATA FOLDER IN THIS REPOSITORY TO WORKING DIRECTORY
+# SET WORKING DIRECTORY TO THE FOLDER CONTAINING MODEL CODE AND DATA
+# CREATE A FOLDER IN THE WORKING DIRECTORY NAMED "Results"
 
 
 
@@ -29,11 +30,15 @@ library(ggrepel)
 library(RColorBrewer)
 library(RCurl)
 
+# Set working directory
+
+setwd("C:/Users/eb15389/OneDrive - University of Bristol/Documents - grp-Eleanor _ Hannah _ Ellen/Model/GIT code")
+
 # Set seed and GGplot theme
 
 set.seed(1)
 theme_set(theme_light(base_size = 15))
-options(scipen=999)
+options(scipen = 999)
 
 source("covid_model_run.R")
 source("covid_model_odes.R")
@@ -115,7 +120,7 @@ vacc_uptake_rate <- c(rep(0, 5), rep(6.4, 7), rep(31.7, 4), rep(31.7, 2), rep(31
 
 # Extracting life years remaining
 
-life_years_remaining <- read_excel("Data/Life expectancy (England).xlsx", sheet="Cohort males and females")
+life_years_remaining <- read_excel("Data/Life expectancy (England).xlsx", sheet = "Cohort males and females")
 
 life_years_remaining <- cbind(life_years_remaining[, -1],
                               rep(life_years_remaining[, ncol(life_years_remaining)], 51))
@@ -148,38 +153,38 @@ for (j in 1:length(vacc_scenarios)) {
     df_results <- df_yearly_inf_hosp_deaths_lc[[j]]
     
     # Calculating infections, symptomatic infections, hospitalisations, ICU admissions, deaths and vaccinations
-    
+
     total_infections[i, j] <- sum(df_results$inc_inf_yearly[[i]])
     total_hosp[i, j] <- sum(df_results$inc_hosp_yearly[[i]])
     total_icu[i, j] <- sum(icu_rate * colSums(df_results$inc_hosp_yearly[[i]]))
     total_deaths[i, j] <- sum(df_results$inc_deaths_yearly[[i]])
     total_vacc[i, j] <- sum(df_results$inc_vacc_yearly[[i]])
     total_symp_inf[i, j] <- sum(df_results$inc_symp_inf_yearly[[i]])
-    
+
     # Calculating life years lost
-    
+
     total_life_years_lost[i, j] <- sum(df_results$inc_deaths_yearly[[i]] * life_years_remaining)
-    
+
     # Calculating costs
-    
+
     total_vacc_cost[i, j] <- sum(costs_discount_rate * ((df_results$inc_vacc_yearly[[i]]) * state_costs$Vaccinated))
     total_inf_cost[i, j] <- sum(costs_discount_rate * ((df_results$inc_symp_inf_yearly[[i]]) * rep(state_costs$`Infectious symptomatic`, each = time_horizon)))
     total_hosp_cost[i, j] <- sum(costs_discount_rate * ((df_results$inc_hosp_yearly[[i]]) * rep(state_costs$Hospitalised, each = time_horizon)))
-    
+
     # Calculating long Covid costs
-    
+
     n_lc_recovered <- df_results$n_recovered_past_year_yearly[[i]] * rep(long_covid_risk, each = time_horizon)
     n_lc_recovered_vaccinated <- df_results$n_recovered_vaccinated_past_year_yearly[[i]] * red_long_covid * rep(long_covid_risk, each = time_horizon)
     n_lc_recovered_waned <- df_results$n_recovered_waned_past_year_yearly[[i]] * wan_long_covid * rep(long_covid_risk, each = time_horizon)
     n_lc_recovered_total <- n_lc_recovered + n_lc_recovered_vaccinated + n_lc_recovered_waned
     total_lc_cost[i, j] <- sum(costs_discount_rate * (n_lc_recovered_total * state_costs$`Long Covid`))
-    
+
     # Calculating LC person-years
-    
-    total_lc_person_years[i, j] <- sum(n_lc_recovered_total)/365
-    
+
+    total_lc_person_years[i, j] <- sum(n_lc_recovered_total) / 365
+
     # Calculating QALYs
-    
+
     total_qalys[i, j] <- sum(qalys_discount_rate * ((df_results$n_healthy_yearly[[i]] -
                                                        n_lc_recovered_total) * rep(state_utilities$Healthy,
                                                                                    each = time_horizon) +
@@ -189,7 +194,7 @@ for (j in 1:length(vacc_scenarios)) {
                                                       rep(state_utilities$Hospitalised, each = time_horizon) +
                                                       n_lc_recovered_total * rep(state_utilities$`Long Covid`,
                                                                                  each = time_horizon)))
-    
+
     # Calculating mean yearly hospital admissions
     
     mean_yearly_hosp[i, j] <- mean(rowSums(df_results$inc_hosp_yearly[[i]]))
@@ -199,30 +204,30 @@ for (j in 1:length(vacc_scenarios)) {
     mean_yearly_deaths[i, j] <- mean(rowSums(df_results$inc_deaths_yearly[[i]]))
     
     # Calculating mean number of vaccinations a person receives each year, counting only the eligible population (ACC. FOR uptake rate)
-    
+
     vacc_yearly_coverage_by_age[i, ] <- (100 * colMeans(df_results$inc_vacc_yearly[[i]])) / age_dist
-    
+
     # Calculating number of infections in each age group, and annual number of cases
-    
+
     total_cases_age_strat[i, ] <- colSums(df_results$inc_inf_yearly[[i]])
     annual_cases[i, ] <- rowSums(df_results$inc_inf_yearly[[i]])
-    
+
     # Calculating number of vaccinations in each age group
-    
+
     total_vacc_age_strat[i, ] <- colSums(df_results$inc_vacc_yearly[[i]])
-    
+
     # Calculating disease averted summaries
-    
+
     cases_averted[i, j] <- total_infections[i, 1] - total_infections[i, j]
     hosp_averted[i, j] <- total_hosp[i, 1] - total_hosp[i, j]
     deaths_averted[i, j] <- total_deaths[i, 1] - total_deaths[i, j]
     life_years_saved[i, j] <- total_life_years_lost[i, 1] - total_life_years_lost[i, j]
     long_covid_py_averted[i, j] <- total_lc_person_years[i, 1] - total_lc_person_years[i, j]
-    
+
     # Calculating costs with no discounting
-    
+
     total_vacc_cost_no_discounting[i, j] <- sum((df_results$inc_vacc_yearly[[i]]) * state_costs$Vaccinated)
-    total_inf_cost_no_discounting[i, j] <- sum((df_results$inc_symp_inf_yearly[[i]]) * rep(state_costs$`Infectious symptomatic`, 
+    total_inf_cost_no_discounting[i, j] <- sum((df_results$inc_symp_inf_yearly[[i]]) * rep(state_costs$`Infectious symptomatic`,
                                                                                            each = time_horizon))
     total_hosp_cost_no_discounting[i, j] <- sum((df_results$inc_hosp_yearly[[i]]) * rep(state_costs$Hospitalised, each = time_horizon))
     total_lc_cost_no_discounting[i, j] <- sum(n_lc_recovered_total * state_costs$`Long Covid`)
@@ -236,9 +241,18 @@ for (j in 1:length(vacc_scenarios)) {
   
 }
 
-mean_yearly_deaths <- round(colMeans(mean_yearly_deaths))
+# Calculating mean yearly hospital admissions and deaths, and 95% credible intervals, and max. weekly hospital admissions post-2030
+
+mean_yearly_hosp_lower <- round(apply(mean_yearly_hosp, 2, function(x) quantile(x, probs = 0.025)))
+mean_yearly_hosp_upper <- round(apply(mean_yearly_hosp, 2, function(x) quantile(x, probs = 0.975)))
+mean_yearly_deaths_lower <- round(apply(mean_yearly_deaths, 2, function(x) quantile(x, probs = 0.025)))
+mean_yearly_deaths_upper <- round(apply(mean_yearly_deaths, 2, function(x) quantile(x, probs = 0.975)))
+
 mean_yearly_hosp <- round(colMeans(mean_yearly_hosp))
-max_weekly_hosp_no_variants <- df_yearly_inf_hosp_deaths_lc[[1]]$max_weekly_hosp_post_2030
+mean_yearly_deaths <- round(colMeans(mean_yearly_deaths))
+max_weekly_hosp_no_vacc <- df_yearly_inf_hosp_deaths_lc[[1]]$max_weekly_hosp_post_2030
+
+# Calculating total costs and collecting results
 
 total_cost <- total_vacc_cost + total_inf_cost + total_hosp_cost + total_lc_cost
 
@@ -464,8 +478,6 @@ inmb_mean <- colMeans(inmb)
 inmb_95_ci <- apply(inmb, 2, quantile, probs = c(0.025, 0.975))
 inmb_95_ci_lower <- round(inmb_95_ci[1,])
 inmb_95_ci_upper <- round(inmb_95_ci[2,])
-
-# Calculating total ICU admissions
 
 # Plotting CEP for multiple vaccination strategies
 
@@ -767,7 +779,6 @@ write.xlsx((model_output), paste0("Results/", as.character(Sys.Date()), " Result
 
 # Calculating disease outcomes by age
 
-
 # Calculating cases by age
 
 mean_cases_age_strat <- matrix(NA, ncol = length(vacc_scenarios), nrow = 101)
@@ -1003,124 +1014,3 @@ disease_averted_by_age_plot
 
 ggsave(path = "Results/", filename = paste0(as.character(Sys.Date()), " Disease averted by age plot.jpeg"), 
        plot = disease_averted_by_age_plot, width = 10, height = 15)
-
-
-
-
-
-############################################################################################
-
-# VARIANT SCENARIO ANALYSIS
-
-# Run the model for each different variant scenario, saving the plots with the variant scenario 
-# name on the end, e.g. "ranked_strategies_plot_base_case"
-
-# Plotting key plots for each variant scenario
-
-ranked_strategies_plot <- ranked_strategies_plot_base_case + theme_light(base_size = 18) +
-  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank(), axis.title.x = element_blank(), legend.position = "bottom",
-        legend.justification = "left", legend.key.width = unit(0.7, 'cm'), title = element_text(size = 14),
-        panel.grid.minor = element_blank()) +
-  labs(title = "(a) Base case (scenario 1)") +
-  ranked_strategies_plot_scenario_2 + labs(title = "(b) Scenario 2") + theme_light(base_size = 18) +
-  theme(axis.text = element_blank(), axis.ticks = element_blank(), axis.title = element_blank(), legend.position = "none",
-        title = element_text(size = 14), panel.grid.minor = element_blank()) +
-  ranked_strategies_plot_scenario_3 + labs(title = "(c) Scenario 3") + theme_light(base_size = 18) +
-  theme(legend.position = "None", title = element_text(size = 14), panel.grid.minor = element_blank()) +
-  ranked_strategies_plot_scenario_4 + labs(title = "(d) Scenario 4") + theme_light(base_size = 18) +
-  theme(axis.text.y = element_blank(), axis.ticks.y = element_blank(), axis.title.y = element_blank(),
-        legend.position = "none", title = element_text(size = 14),
-        panel.grid.minor = element_blank()) +
-  plot_layout(nrow = 2, axis_titles = "collect")
-
-print(ranked_strategies_plot)
-
-ggsave(path = "Results/Variant scenarios/", filename = paste0(as.character(Sys.Date()), " Ranked strategies, variant scenarios.jpeg"),
-       plot = ranked_strategies_plot, width = 13, height = 11)
-
-cost_effectiveness_frontier_variant_scenarios <- cef_plot_base_case + theme_light(base_size = 18) +
-  theme(legend.position = c(0.2, 0.85), legend.text = element_text(size = 12), legend.title = element_text(size = 12),
-        legend.key.height = unit(0.5, 'cm'), title = element_text(size = 14)) + labs(title = "(a) Base case (scenario 1)") +
-  scale_x_continuous(labels = unit_format(unit = "M", scale = 1e-6)) +
-  scale_y_continuous(labels = unit_format(unit = "B", scale = 1e-9)) +
-  cef_plot_scenario_2 + labs(title = "(b) Scenario 2") + theme_light(base_size = 18) +
-  theme(legend.position = "None", title = element_text(size = 14)) +
-  scale_x_continuous(labels = unit_format(unit = "M", scale = 1e-6)) +
-  scale_y_continuous(labels = unit_format(unit = "B", scale = 1e-9)) +
-  cef_plot_scenario_3 + labs(title = "(c) Scenario 3") + theme_light(base_size = 18) +
-  theme(legend.position = "None", title = element_text(size = 14)) +
-  scale_x_continuous(labels = unit_format(unit = "M", scale = 1e-6)) +
-  scale_y_continuous(labels = unit_format(unit = "B", scale = 1e-9)) +
-  cef_plot_scenario_4 + labs(title = "(d) Scenario 4") + theme_light(base_size = 18) +
-  theme(legend.position = "None", title = element_text(size = 14)) +
-  scale_x_continuous(labels = unit_format(unit = "M", scale = 1e-6)) +
-  scale_y_continuous(labels = unit_format(unit = "B", scale = 1e-9)) +
-  plot_layout(nrow = 2, axis_titles = "collect")
-
-print(cost_effectiveness_frontier_variant_scenarios)
-
-ggsave(path = "Results/Variant scenarios/", 
-       filename = paste0(as.character(Sys.Date()), " Cost-effectiveness frontier, variant scenarios.jpeg"),
-       plot = cost_effectiveness_frontier_variant_scenarios, width = 11, height = 10)
-
-ceac_variant_scenarios <- cost_effectiveness_acceptability_curve_base_case + theme_light(base_size = 18) +
-  theme(legend.position = c(0.7, 0.4), title = element_text(size = 14)) + guides(colour = guide_legend(ncol = 3)) +
-  labs(title = "(a) Base case (scenario 1)") + scale_y_continuous(limits = c(0, 1)) +
-  scale_x_continuous(expand = c(0, 0)) +
-  cost_effectiveness_acceptability_curve_scenario_2 + labs(title = "(b) Scenario 2") + theme_light(base_size = 18) +
-  theme(legend.position = "None", title = element_text(size = 14)) + scale_y_continuous(limits = c(0, 1)) +
-  scale_x_continuous(expand = c(0, 0)) +
-  cost_effectiveness_acceptability_curve_scenario_3 + labs(title = "(c) Scenario 3") + theme_light(base_size = 18) +
-  theme(legend.position = "None", title = element_text(size = 14)) + scale_y_continuous(limits = c(0, 1)) +
-  scale_x_continuous(expand = c(0, 0)) +
-  cost_effectiveness_acceptability_curve_scenario_4 + labs(title = "(d) Scenario 4") + theme_light(base_size = 18) +
-  theme(legend.position = "None", legend.height = unit(0.4, 'cm'), title = element_text(size = 14)) +
-  scale_y_continuous(limits = c(0, 1)) +
-  scale_x_continuous(expand = c(0, 0)) +
-  plot_layout(nrow = 2, axes = "collect_x", axis_titles = "collect")
-
-print(ceac_variant_scenarios)
-
-ggsave(path = "Results/Variant scenarios/", 
-       filename = paste0(as.character(Sys.Date()), " Cost-effectiveness acceptability curve, variant scenarios.jpeg"),
-       plot = ceac_variant_scenarios, width = 12, height = 9)
-
-mean_yearly_deaths_plot_variant_scenarios <- mean_yearly_deaths_plot_base_case + theme_light(base_size = 18) +
-  theme(axis.text.x = element_blank(),
-        axis.ticks.x = element_blank(), axis.title.x = element_blank(), legend.position = "None",
-        title = element_text(size = 14)) + labs(title = "(a) Base case (scenario 1)", size = 13) +
-  geom_hline(yintercept = 34317, colour = "red", linewidth = 1.5, linetype = "dashed") +
-  annotate(geom = "label", x = 2, y = 40000, label = "2022", size = 5) +
-  scale_y_continuous(limits = c(0, 85000), breaks = seq(0, 85000, by = 10000)) +
-
-  mean_yearly_deaths_plot_scenario_2 + labs(title = "(b) Scenario 2") + theme_light(base_size = 18) +
-  theme(axis.text = element_blank(),
-        axis.ticks = element_blank(), axis.title.x = element_blank(), legend.position = "None",
-        title = element_text(size = 14)) +
-  geom_hline(yintercept = 34317, colour = "red", linewidth = 1.5, linetype = "dashed") +
-  annotate(geom = "label", x = 2, y = 40000, label = "2022", size = 5) +
-  scale_y_continuous(limits = c(0, 85000), breaks = seq(0, 85000, by = 10000)) +
-
-  mean_yearly_deaths_plot_scenario_3 + labs(title = "(c) Scenario 3") + theme_light(base_size = 18) +
-  theme(legend.position = "None",
-        title = element_text(size = 14), axis.text.x = element_text(hjust = 1, angle =  60, vjust = 1, size = 14)) +
-  geom_hline(yintercept = 34317, colour = "red", linewidth = 1.5, linetype = "dashed") +
-  annotate(geom = "label", x = 2, y = 30000, label = "2022", size = 5) +
-  scale_y_continuous(limits = c(0, 85000), breaks = seq(0, 85000, by = 10000)) +
-
-  mean_yearly_deaths_plot_scenario_4 + labs(title = "(d) Scenario 4") + theme_light(base_size = 18) +
-  theme(axis.text.y = element_blank(),
-        axis.ticks.y = element_blank(), legend.position = "None", title = element_text(size = 14),
-        axis.text.x = element_text(hjust = 1, angle =  60, vjust = 1, size = 14)) +
-  geom_hline(yintercept = 34317, colour = "red", linewidth = 1.5, linetype = "dashed") +
-  annotate(geom = "label", x = 2, y = 34317, label = "2022", size = 5) +
-  scale_y_continuous(limits = c(0, 85000), breaks = seq(0, 85000, by = 10000)) +
-
-  plot_layout(nrow = 2, heights = c(3,3), axis_titles = "collect")
-
-print(mean_yearly_deaths_plot_variant_scenarios)
-
-ggsave(path = "Results/Variant scenarios/", filename = paste0(as.character(Sys.Date()), " Mean yearly deaths, variant scenarios.jpeg"),
-       plot = mean_yearly_deaths_plot_variant_scenarios, width = 14, height = 10)
-
-
