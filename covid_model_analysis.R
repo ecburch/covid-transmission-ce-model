@@ -30,10 +30,6 @@ library(ggrepel)
 library(RColorBrewer)
 library(RCurl)
 
-# Set working directory
-
-setwd("C:/Users/eb15389/OneDrive - University of Bristol/Documents - grp-Eleanor _ Hannah _ Ellen/Model/GIT code")
-
 # Set seed and GGplot theme
 
 set.seed(1)
@@ -1014,3 +1010,4 @@ disease_averted_by_age_plot
 
 ggsave(path = "Results/", filename = paste0(as.character(Sys.Date()), " Disease averted by age plot.jpeg"), 
        plot = disease_averted_by_age_plot, width = 10, height = 15)
+
