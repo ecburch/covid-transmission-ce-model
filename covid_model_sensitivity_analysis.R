@@ -1,6 +1,6 @@
 
 # SET WORKING DIRECTORY TO THE FOLDER CONTAINING MODEL CODE AND DATA
-# CREATE A FOLDER IN THE WORKING DIRECTORY NAMED "RESULTS" AND A SUBFOLDER WITHIN IT NAMED "SENSITIVITY ANALYSIS"
+# CREATE A FOLDER IN THE WORKING DIRECTORY NAMED "Results" AND A SUBFOLDER WITHIN IT NAMED "Sensitivity analysis"
 
 
 
@@ -2147,4 +2147,5 @@ ggsave(path = "Results/Sensitivity analysis", filename = paste0(as.character(Sys
                                                                 " Plot ii. Cost-effectiveness frontier (long covid parameters).jpeg"),
        plot = lc_sa_cef_plots, width = 8, height = 10
        )
+
 
