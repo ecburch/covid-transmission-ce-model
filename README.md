@@ -1,7 +1,7 @@
 # covid-transmission-ce-model
 This is the R code for an age-structured, deterministic, compartmental model of COVID-19 transmission in England, with a 100-year time horizon and with costs and quality-adjusted life-years (QALYs) incorporated.
 
-To run the code, download all scripts and the data folder, and set the containing folder to be the working directory in R. Create a folder within the working directory named "Results", with subfolders "Sensitivity analysis" and "Variant scenarios".
+To run the code, download all scripts and the data folder, and set the containing folder to be the working directory in R. Create a folder within the working directory named "Results", with subfolders named "Model fitting", "Sensitivity analysis", and "Variant scenarios".
 
 There are nine .R scripts for running the Covid model, which are described below:
 1. calculate_variant_param_change.R
