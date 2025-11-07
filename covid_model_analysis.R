@@ -97,7 +97,7 @@ for (i in 1:length(vacc_scenarios)) {
   
 }
 
-save.image("Model run 1.RData")
+save.image("Results/Model run 1.RData")
 
 # Setting discount rate
 
@@ -1010,4 +1010,5 @@ disease_averted_by_age_plot
 
 ggsave(path = "Results/", filename = paste0(as.character(Sys.Date()), " Disease averted by age plot.jpeg"), 
        plot = disease_averted_by_age_plot, width = 10, height = 15)
+
 
