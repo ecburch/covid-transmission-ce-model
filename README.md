@@ -7,21 +7,22 @@ There are nine R scripts for running the Covid model, which are described below:
 1. calculate_variant_param_change.R
    
    This code contains five functions which calculate changes in model parameters due to new variants being introduced. These functions are called upon in the "covid_model_fit.R", "covid_model_run.R", "covid_model_analysis.R", "covid_model_analysis_variants_50_year_simulation_comparator_only.R", and "covid_model_analysis_variants_full_simulation.R" scripts.
-3. covid_model_economic_parameters.R
+2. covid_model_economic_parameters.R
+   
    This code contains the parameters required for the economic evaluation, including the risk of and vaccine effectiveness against long Covid, the ICU admission rate, and all state utilities and costs. These parameters are required in the "covid_model_analysis.R", "covid_model_analysis_variants_full_simulation.R", and "covid_model_sensitivity_analysis.R" scripts.
-4. covid_model_odes.R
+5. covid_model_odes.R
    This code contains the series of ordinary differential equations which make up the Covid model. The ODE function is called upon in the "covid_model_fit.R", "covid_model_run.R", "covid_model_analysis.R", "covid_model_analysis_variants_50_year_simulation_comparator_only.R", and "covid_model_analysis_variants_full_simulation.R" scripts.
-5. covid_model_fit.R
+6. covid_model_fit.R
    This is the model fitting code which was run using the Advanced Computing Research Centre at the University of Bristol. The fitting function is set up to run in parallel on 24 clusters.
-6. covid_model_run.R
+7. covid_model_run.R
    This code contains the function to set up and run the Covid model, given a set of input parameters obtained from the model fitting, the variant scenario, number of yearly variants, vaccination scenario, and time horizon. The function outputs the results from running the model, which are then analysed and interpreted in a separate script. This function is called upon in the "covid_model_analysis.R" and "covid_model_analysis_variants_full_simulation.R" scripts.
-7. covid_model_analysis.R
+8. covid_model_analysis.R
    This is the code which runs and carries out the main analysis of the Covid model, using the functions and parameters described above. This script outputs the main results tables and figures. In the model analysis, 500 parameter sets obtained from the posterior distribution of the model fit are used, and a time horizon of 100 years.
-8. covid_model_analysis_variants_50_year_simulation_comparator_only.R
+9. covid_model_analysis_variants_50_year_simulation_comparator_only.R
    This script runs the Covid model for each of the variant scenarios for 50 years in the comparator vaccination strategy (no future vaccination) to plot the projected weekly hospital admissions and deaths in this scenario for each variant, over 50 years. 
-9. covid_model_analysis_variants_full_simulation.R
+10. covid_model_analysis_variants_full_simulation.R
    This script runs the Covid model for each of the variant scenarios for the full 100-year period over all vaccination strategies, and carries out the full analysis for each variant scenario. This script outputs the results tables and figures for the variant scenario analysis.
-10. covid_model_sensitivity_analysis.R
+11. covid_model_sensitivity_analysis.R
     This script loads the output of the model run from the "covid_model_analysis.R" script and carries out the sensitivity analyses on the results. This script outputs the results tables and figures for the sensitivity analyses. The "covid_model_analysis.R" script must be run first to save the "Model run.RData" file.
 
 This repository also contains four .xslx data files:
