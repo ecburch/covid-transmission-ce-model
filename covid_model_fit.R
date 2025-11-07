@@ -3017,7 +3017,7 @@ summary_tidy <- summary |>
 
 abc_seq_results <- append(abc_seq, append(list(GOF), list(summary_tidy)))
 names(abc_seq_results) <- c(names(abc_seq), "GOF", "Parameter summaries")
-write.xlsx(abc_seq_results, "Model fit results 1X.xlsx")
+write.xlsx(abc_seq_results, paste0("Results/Model fitting/", as.character(Sys.Date()), "Model fit results 1X.xlsx"))
 
 # Run model using parameters from the fitting
 
@@ -3177,3 +3177,4 @@ save.image("Results/Model fitting/Model fit 2X.RData")
 
 end_time <- Sys.time()
 print(end_time-start_time)
+
