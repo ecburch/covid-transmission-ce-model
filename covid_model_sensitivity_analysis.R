@@ -41,7 +41,7 @@ options(scipen=999)
 # LOAD THE OUTPUT "Model run 1.RData" FROM RUNNING THE MODEL FOR 100 YEARS WITH 500 PARAMETER SETS. 
 # The "results", "df_yearly_inf_hosp_deaths_lc", and "df_hosp_deaths_weekly_summaries" dataframes and lists are required for this analysis.
 
-load("Model run 1.RData")
+load("Results/Model run 1.RData")
 
 ###############################################################################
 
@@ -2147,5 +2147,6 @@ ggsave(path = "Results/Sensitivity analysis", filename = paste0(as.character(Sys
                                                                 " Plot ii. Cost-effectiveness frontier (long covid parameters).jpeg"),
        plot = lc_sa_cef_plots, width = 8, height = 10
        )
+
 
 
